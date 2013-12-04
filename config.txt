@@ -1,0 +1,8 @@
+#weatherurl
+http://weather.noaa.gov/pub/data/observations/metar/decoded/CYYZ.TXT
+
+#wolframalpha api
+VGATJX-XEUAUHJEWV
+
+#Error allowance rate for wolfram alpha results (in decimal)
+0.6
