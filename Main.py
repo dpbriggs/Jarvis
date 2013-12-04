@@ -3,22 +3,33 @@
 import subprocess
 import urllib.request 
 
-
+##Random Functions
 
 #load config file and edit it
 tempconfig = open("config.txt").readlines()
 config = []
 for i in range(0, len(tempconfig)):  #elements in array
     if tempconfig[i].find('#') == -1 and tempconfig[i] != "\n":
-        config.append(tempconfig[i])
-        
-        
+        config.append(tempconfig[i])      
 
 #Call espeak
 def callespeak(inputstr):
     proc=subprocess.Popen(['espeak',str(inputstr)])
 
 
+def accuracy(input, output):
+    inputterms = input.split(' ')
+    outputterms = output.split(' ')
+    hold = 0
+    for i in inputterms:
+        if i in outputterms:
+            hold += 1
+    return hold
+#print(accuracy('this is an cat', 'this is a dog'))
+##/    
+
+#Weather information
+    
 def formatweatherinfo(tempurature, windchill, conditions):
     hold = [tempurature, windchill, conditions]
     print(hold)
@@ -28,9 +39,6 @@ def formatweatherinfo(tempurature, windchill, conditions):
 
     output = "It is " + hold[0] + " Degrees with a Windchill of " + hold[1] + " and the sky is" + hold[2]
     return output
-    
-
-#Pull weather information
 
 def getweather():
     url = urllib.request.urlopen(config[0]).read()
@@ -56,15 +64,7 @@ def getweather():
 getweather()
 urlInput = "How many m and m's could fit in a bathtub?"
 
-def accuracy(input, output):
-    inputterms = input.split(' ')
-    outputterms = output.split(' ')
-    hold = 0
-    for i in inputterms:
-        if i in outputterms:
-            hold += 1
-    return hold
-#print(accuracy('this is an cat', 'this is a dog'))
+
 
 class wolfram:
 
