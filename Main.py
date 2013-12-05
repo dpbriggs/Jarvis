@@ -85,7 +85,7 @@ class wolfram:
 #wolfram.geninfo(urlInput)
 
 
-
+#TipsFedora
 
 
 
