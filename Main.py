@@ -37,7 +37,7 @@ def formatweatherinfo(tempurature, windchill, conditions):
         if hold[i][0] == "-":
             hold[i] = "negative " + hold[i][1:]
 
-    output = "It is " + hold[0] + " Degrees with a Windchill of " + hold[1] + " and the sky is" + hold[2]
+    output = "It is " + hold[0] + " Degrees with a Windchill of " + hold[1] + " and the skys are" + hold[2]
     return output
 
 def getweather():
