@@ -4,7 +4,7 @@ import subprocess
 import urllib.request 
 
 ## MAJOR CLASSES: input, output, format, and data
-## EACH CLASS DEALS NAME
+## EACH CLASS DEALS WITH NAME
 ## CLASSES YET TO BE MADE:
 ##      NATURAL LANGUAGE OUTPUT
 ##      INPUT OF ANY KIND
@@ -77,7 +77,7 @@ class data:
         outdata = format.weatherinfo(str(celsius), str(windchill), conditions)
         output.callespeak(outdata)
 
-    matchingkey = config[2]
+    
  
     def wolframinfo(urlInput):
         url = 'http://api.wolframalpha.com/v2/query?input="' + urlInput.replace(" ", "%20") + '"&appid=' + config[1]
