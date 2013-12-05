@@ -86,6 +86,7 @@ class wolfram:
 
 
 #TipsFedora
+#100% manly
 
 
 
