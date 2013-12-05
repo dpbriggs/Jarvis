@@ -84,10 +84,7 @@ class wolfram:
         
 #wolfram.geninfo(urlInput)
 
-
-#TipsFedora
-
-
+#Manu eats doo doo
 
 
 
