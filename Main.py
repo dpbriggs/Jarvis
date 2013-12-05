@@ -5,7 +5,7 @@ import urllib.request
 
 ## MAJOR CLASSES: input, output, format, and data
 ## EACH CLASS DEALS WITH NAME
-## CLASSES YET TO BE MADE:
+## THINGS YET TO BE MADE:
 ##      NATURAL LANGUAGE OUTPUT
 ##      INPUT OF ANY KIND
 ## CLASSES YET TO BE EXPANDED:
