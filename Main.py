@@ -61,8 +61,8 @@ def getweather():
     output = formatweatherinfo(str(celsius), str(windchill), conditions)
     callespeak(output)    
 
-getweather()
-urlInput = "How many m and m's could fit in a bathtub?"
+#getweather()
+urlInput = "How big is the sun"
 
 
 
@@ -75,18 +75,21 @@ class wolfram:
         wolfinfo = urllib.request.urlopen(url).read()
         xmltext = wolfinfo.decode('utf-8')
         xmltext = xmltext.split('</pod>')
-        numpods = xmltext[0][xmltext[0].find('numpods=')+9:xmltext[0].find('datatypes=')-1].rstrip('"')
-        podinfo = []
-       # for i in xmltext:
-          #  podinfo.append([
+        numpods = int(xmltext[0][xmltext[0].find('numpods=')+9:xmltext[0].find('datatypes=')-6])
+        info = {}
+        for i in range(1, numpods):
+            podtitle = xmltext[i][xmltext[i].find('<pod title="')+len('<pod title="')+3:xmltext[i].find('scanner')-7].split('|')
+            podinfo = xmltext[i][xmltext[i].find('<plaintext>')+len('<plaintext>'):xmltext[i].find('</plaintext>')].split('|')
+            info[i] = (podtitle, podinfo)
+        return info
+       
             
 
         
-#wolfram.geninfo(urlInput)
+wolfram.geninfo(urlInput)
 
 
-#TipsFedora
-#100% manly
+
 
 
 
