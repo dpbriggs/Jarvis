@@ -4,5 +4,8 @@ http://weather.noaa.gov/pub/data/observations/metar/decoded/CYYZ.TXT
 #wolframalpha api
 VGATJX-XEUAUHJEWV
 
-#Error allowance rate for wolfram alpha results (in decimal)
-0.6
+#Minimum number of keywords for successful match
+1
+
+#Prefered Keywords (For Wolframalpha searches) SEPERATE BY COMMAS WITH NO SPACES
+approximate,result
