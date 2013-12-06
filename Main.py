@@ -68,17 +68,32 @@ urlInput = "How many m and m's could fit in a bathtub?"
 
 class wolfram:
 
-    matchingkey = config[2]
  
     def geninfo(urlInput):
         url = 'http://api.wolframalpha.com/v2/query?input="' + urlInput.replace(" ", "%20") + '"&appid=' + config[1]
         wolfinfo = urllib.request.urlopen(url).read()
         xmltext = wolfinfo.decode('utf-8')
         xmltext = xmltext.split('</pod>')
+<<<<<<< Updated upstream
         numpods = xmltext[0][xmltext[0].find('numpods=')+9:xmltext[0].find('datatypes=')-1].rstrip('"')
         podinfo = []
        # for i in xmltext:
           #  podinfo.append([
+=======
+        numpods = int(xmltext[0][xmltext[0].find('numpods=')+9:xmltext[0].find('datatypes=')-6])
+        info = {}
+        for i in range(1, numpods):
+            podtitle = xmltext[i][xmltext[i].find('<pod title="')+len('<pod title="')+3:xmltext[i].find('scanner')-7].split('|')
+            podinfo = xmltext[i][xmltext[i].find('<plaintext>')+len('<plaintext>'):xmltext[i].find('</plaintext>')].split('|')
+            info[i] = (podtitle, podinfo)
+        return info
+
+config = input.readconfig()
+#print(config)
+urlInput = "what is the weather in ajax?"
+
+data.getweather()
+>>>>>>> Stashed changes
             
 
         
