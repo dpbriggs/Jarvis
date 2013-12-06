@@ -29,6 +29,7 @@ class output:
     #Call espeak
     def callespeak(inputstr):
         proc=subprocess.Popen(['espeak',str(inputstr)])
+        
 
 
 class accuracy:
@@ -41,7 +42,7 @@ class accuracy:
             if i in outputterms:
                 hold += 1
         return hold
-    #print(accuracy('this is an cat', 'this is a dog'))
+    
 
 class format:
     def weatherinfo(tempurature, windchill, conditions):
@@ -85,6 +86,7 @@ class data:
         xmltext = wolfinfo.decode('utf-8')
         xmltext = xmltext.split('</pod>')
         numpods = int(xmltext[0][xmltext[0].find('numpods=')+9:xmltext[0].find('datatypes=')-6])
+        #print(xmltext)
         info = {}
         for i in range(1, numpods):
             podtitle = xmltext[i][xmltext[i].find('<pod title="')+len('<pod title="')+3:xmltext[i].find('scanner')-7].split('|')
@@ -94,14 +96,12 @@ class data:
 
 config = input.readconfig()
 #print(config)
-urlInput = "what is eulors number?"
-
+urlInput = "number phi"
+#data.getweather()
+print(data.wolframinfo(urlInput))
             
 
         
-
-
-
 
 
 
