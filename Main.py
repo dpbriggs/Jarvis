@@ -29,9 +29,19 @@ class output:
     #Call espeak
     def callespeak(inputstr):
         proc=subprocess.Popen(['espeak',str(inputstr)])
-
-
-class accuracy:
+    
+            
+class processing:
+    
+    def weatherinfo(tempurature, windchill, conditions):
+        hold = [tempurature, windchill, conditions]
+        print(hold)
+        for i in range(0, len(hold)-1):
+            if hold[i][0] == "-":
+                hold[i] = "negative " + hold[i][1:]
+                
+        output = "It is " + hold[0] + " Degrees with a Windchill of " + hold[1] + " and the skys are" + hold[2]
+        return output
     
     def numkeywords(input, output):
         inputterms = input.split(' ')
@@ -42,19 +52,9 @@ class accuracy:
                 hold += 1
         return hold
     #print(accuracy('this is an cat', 'this is a dog'))
-
-class format:
-    def weatherinfo(tempurature, windchill, conditions):
-        hold = [tempurature, windchill, conditions]
-        print(hold)
-        for i in range(0, len(hold)-1):
-            if hold[i][0] == "-":
-                hold[i] = "negative " + hold[i][1:]
-
-        output = "It is " + hold[0] + " Degrees with a Windchill of " + hold[1] + " and the skys are" + hold[2]
-        return output
     
 class data:
+    
     
     def getweather():
         url = urllib.request.urlopen(config[0]).read()
@@ -74,7 +74,7 @@ class data:
                 conditions = text[i][len('Sky conditions:'):]
         if nowindchill != 1:
             windchill = 0
-        outdata = format.weatherinfo(str(celsius), str(windchill), conditions)
+        outdata = processing.weatherinfo(str(celsius), str(windchill), conditions)
         output.callespeak(outdata)
 
  
@@ -83,15 +83,10 @@ class data:
         wolfinfo = urllib.request.urlopen(url).read()
         xmltext = wolfinfo.decode('utf-8')
         xmltext = xmltext.split('</pod>')
-<<<<<<< HEAD
-<<<<<<< Updated upstream
         numpods = xmltext[0][xmltext[0].find('numpods=')+9:xmltext[0].find('datatypes=')-1].rstrip('"')
         podinfo = []
        # for i in xmltext:
           #  podinfo.append([
-=======
-=======
->>>>>>> refs/remotes/origin/master
         numpods = int(xmltext[0][xmltext[0].find('numpods=')+9:xmltext[0].find('datatypes=')-6])
         info = {}
         for i in range(1, numpods):
@@ -102,18 +97,13 @@ class data:
 
 config = input.readconfig()
 #print(config)
-<<<<<<< HEAD
 urlInput = "what is the weather in ajax?"
 
 data.getweather()
->>>>>>> Stashed changes
-=======
+
 urlInput = "what is eulors number?"
 
->>>>>>> refs/remotes/origin/master
-            
 
-        
 
 
 
