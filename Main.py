@@ -23,6 +23,9 @@ class input:
                 config.append(tempconfig[i].rstrip('\n'))
         config[3] = config[3].split(',') #seperate keywords
         return config
+    def readkeywords():
+        tempconfig = open("keywords.txt").readlines()
+        print(tempconfig)
 
     
 class output:
@@ -96,9 +99,15 @@ class data:
 
 config = input.readconfig()
 #print(config)
-urlInput = "number phi"
+urlInput = "how many m and m's can fit into a bathtub"
 #data.getweather()
-print(data.wolframinfo(urlInput))
+#print(data.wolframinfo(urlInput))
+
+#def parseinput(input):
+    
+    
+    
+
             
 
         
