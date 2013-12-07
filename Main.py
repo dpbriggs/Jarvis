@@ -12,6 +12,9 @@ import urllib.request
 ##      ACCURACY
 ##      ETC (We'll expand when we discuss)
 
+## INCONSISTENCIES IN THE WOLFRAMALPHA XML FILE MAKE SUBPOD SUPPORT VERY DIFFICULT
+## WILL DISCUSS WITH YOU GUYS LATER
+
     
 class input:
     def readconfig():
@@ -93,15 +96,24 @@ class data:
         output.callespeak(outdata)
 
 
- 
     def wolframinfo(urlInput):
         url = 'http://api.wolframalpha.com/v2/query?input="' + urlInput.replace(" ", "%20") + '"&appid=' + config[1]
         wolfinfo = urllib.request.urlopen(url).read()
         xmltext = wolfinfo.decode('utf-8')
         xmltext = xmltext.split('</pod>')
-        numpods = xmltext[0][xmltext[0].find('numpods=')+9:xmltext[0].find('datatypes=')-1].rstrip('"')
+        #numpods = xmltext[0][xmltext[0].find('numpods=')+9:xmltext[0].find('datatypes=')-1].rstrip('"')
         podinfo = []
         numpods = int(xmltext[0][xmltext[0].find('numpods=')+9:xmltext[0].find('datatypes=')-6])
+        numsubpods = []
+        ## Second line (numsubpod[1]) has primary='true' tag, so it must be included seperated (talking about numsubpods)
+        #numsubpods.append(int(xmltext[0][xmltext[0].find('numsubpods=')+len('numsubpods=')+1:xmltext[0].find('<subpod')-5]))
+        ##Line Two \/\/\/
+        #numsubpods.append(int(xmltext[1][xmltext[1].find('numsubpods=')+len('numsubpods=')+1:xmltext[1].find('primary')-7]))
+        #for i in range(2, len(xmltext)):
+          #  numsubpods.append(int(xmltext[i][xmltext[i].find('numsubpods=')+len('numsubpods=')+1:xmltext[i].find('<subpod')-5]))
+        
+            
+        
         info = {}
         for i in range(1, numpods):
             podtitle = xmltext[i][xmltext[i].find('<pod title="')+len('<pod title="')+3:xmltext[i].find('scanner')-7].split('|')
@@ -109,8 +121,7 @@ class data:
             info[i] = (podtitle, podinfo)
         return info
 
-
-
+ 
 config = input.readconfig()
 hold = input.readkeywords()
 keywords = []
@@ -120,34 +131,28 @@ for i in range(0, len(hold)):
     functions.append(hold[i][1])
 
 
-#print(keywords)
 
-#print(config)
 urlInput = "how many m and m's can fit into a bathtub"
-#data.getweather()
-#print(data.wolframinfo(urlInput))
+
 
 def parseinput(input, keywords, functions):
     matching = processing.numkeywords(input, keywords)
+    
     matchingkeys = []
     matchingfunc = []
     for i in matching:
-        if matching in keywords:
-            matchingkeys.append(i)
-    for k in matchingkeys:
-        if k in functions:
-            matchingfunc.append(k)
-    print(matchingkeys)
-    print('$$$$$$')
-    print(matchingfunc)
+        if i in keywords:
+            matchingfunc.append(functions[keywords.index(i)])
+            
+       
     if len(matchingfunc) == 1:
         if matchingfunc[0] == 'weather':
             data.getweather()
         elif matchingfunc[0] == 'wolfram':
-            data.wolframinfo(input)
+            data.wolframinfo(input.rstrip(matching[0]))
     
-    
-parseinput('search '+urlInput, keywords, functions) 
+#print('search '+urlInput)
+parseinput('weather', keywords, functions) 
     
 
     
