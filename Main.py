@@ -61,11 +61,28 @@ class processing:
             if i in outputterms:
                 hold.append(i)
         return hold
+<<<<<<< Updated upstream
 
 
     
+=======
+    #print(accuracy('this is an cat', 'this is a dog'))
+
+    def process_output (input,output) :
+        processout= []
+        inputterms = input.split(' ')
+        outputterms = output.split(' ')
+        hold = []
+        for i in outputterms:
+            for j in inputterms:
+                if j in outputterms[i]:
+                    hold[i] += 1
+        for i in outputterms:
+            processout[i]=(outputterms[i],hold[i])
+        return processout
+       
+>>>>>>> Stashed changes
 class data:
-    
     
     def getweather():
         url = urllib.request.urlopen(config[0]).read()
@@ -106,6 +123,7 @@ class data:
         return info
 
 config = input.readconfig()
+<<<<<<< Updated upstream
 keywords = input.readkeywords()
 functions = config[4]
 #print(keywords)
@@ -114,6 +132,14 @@ functions = config[4]
 urlInput = "how many m and m's can fit into a bathtub"
 #data.getweather()
 #print(data.wolframinfo(urlInput))
+=======
+#print(config)
+urlInput = "what is the weather in ajax?"
+
+print(config[3][1])
+
+
+>>>>>>> Stashed changes
 
 #def parseinput(input, keywords):
     
