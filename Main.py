@@ -22,7 +22,6 @@ class input:
             if tempconfig[i].find('#') == -1 and tempconfig[i] != "\n":
                 config.append(tempconfig[i].rstrip('\n'))
         config[3] = config[3].split(',') #seperate keywords
-        config[4] = config[4].split(',') #seperate functions
         return config
     
     def readkeywords():
@@ -44,7 +43,7 @@ class processing:
     
     def weatherinfo(tempurature, windchill, conditions):
         hold = [tempurature, windchill, conditions]
-        print(hold)
+        
         for i in range(0, len(hold)-1):
             if hold[i][0] == "-":
                 hold[i] = "negative " + hold[i][1:]
@@ -55,7 +54,12 @@ class processing:
     
     def numkeywords(input, output):
         inputterms = input.split(' ')
-        outputterms = output.split(' ')
+        for i in range(0, len(inputterms)):
+            inputterms[i] = inputterms[i].rstrip(' ')
+
+        
+        outputterms = output
+        
         hold = []
         for i in inputterms:
             if i in outputterms:
@@ -105,9 +109,17 @@ class data:
             info[i] = (podtitle, podinfo)
         return info
 
+
+
 config = input.readconfig()
-keywords = input.readkeywords()
-functions = config[4]
+hold = input.readkeywords()
+keywords = []
+functions = []
+for i in range(0, len(hold)):
+    keywords.append(hold[i][0])
+    functions.append(hold[i][1])
+
+
 #print(keywords)
 
 #print(config)
@@ -115,11 +127,27 @@ urlInput = "how many m and m's can fit into a bathtub"
 #data.getweather()
 #print(data.wolframinfo(urlInput))
 
-#def parseinput(input, keywords):
+def parseinput(input, keywords, functions):
+    matching = processing.numkeywords(input, keywords)
+    matchingkeys = []
+    matchingfunc = []
+    for i in matching:
+        if matching in keywords:
+            matchingkeys.append(i)
+    for k in matchingkeys:
+        if k in functions:
+            matchingfunc.append(k)
+    print(matchingkeys)
+    print('$$$$$$')
+    print(matchingfunc)
+    if len(matchingfunc) == 1:
+        if matchingfunc[0] == 'weather':
+            data.getweather()
+        elif matchingfunc[0] == 'wolfram':
+            data.wolframinfo(input)
     
-print(processing.numkeywords('this is a cat', 'this is an dog'))
-            
-#parseinput('weather in ajax', functions, keywords) 
+    
+parseinput('search '+urlInput, keywords, functions) 
     
 
     
