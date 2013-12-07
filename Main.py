@@ -22,22 +22,22 @@ class input:
             if tempconfig[i].find('#') == -1 and tempconfig[i] != "\n":
                 config.append(tempconfig[i].rstrip('\n'))
         config[3] = config[3].split(',') #seperate keywords
+        config[4] = config[4].split(',') #seperate functions
         return config
+    
     def readkeywords():
         tempconfig = open("keywords.txt").readlines()
-        print(tempconfig)
-
+        keywords = []
+        for i in range(0, len(tempconfig)):           
+            if tempconfig[i].find('#') == -1 and tempconfig[i] != "\n":
+                textline = tempconfig[i].rstrip('\n')
+                keywords.append(textline.split(','))
+        return keywords
     
 class output:
     #Call espeak
     def callespeak(inputstr):
         proc=subprocess.Popen(['espeak',str(inputstr)])
-<<<<<<< HEAD
-        
-
-
-class accuracy:
-=======
     
             
 class processing:
@@ -51,32 +51,18 @@ class processing:
                 
         output = "It is " + hold[0] + " Degrees with a Windchill of " + hold[1] + " and the skys are" + hold[2]
         return output
->>>>>>> refs/remotes/origin/Manu
+
     
     def numkeywords(input, output):
         inputterms = input.split(' ')
         outputterms = output.split(' ')
-        hold = 0
+        hold = []
         for i in inputterms:
             if i in outputterms:
-                hold += 1
+                hold.append(i)
         return hold
-<<<<<<< HEAD
-    
 
-class format:
-    def weatherinfo(tempurature, windchill, conditions):
-        hold = [tempurature, windchill, conditions]
-        print(hold)
-        for i in range(0, len(hold)-1):
-            if hold[i][0] == "-":
-                hold[i] = "negative " + hold[i][1:]
 
-        output = "It is " + hold[0] + " Degrees with a Windchill of " + hold[1] + " and the skys are" + hold[2]
-        return output
-=======
-    #print(accuracy('this is an cat', 'this is a dog'))
->>>>>>> refs/remotes/origin/Manu
     
 class data:
     
@@ -102,10 +88,7 @@ class data:
         outdata = processing.weatherinfo(str(celsius), str(windchill), conditions)
         output.callespeak(outdata)
 
-<<<<<<< HEAD
-    
-=======
->>>>>>> refs/remotes/origin/Manu
+
  
     def wolframinfo(urlInput):
         url = 'http://api.wolframalpha.com/v2/query?input="' + urlInput.replace(" ", "%20") + '"&appid=' + config[1]
@@ -114,10 +97,7 @@ class data:
         xmltext = xmltext.split('</pod>')
         numpods = xmltext[0][xmltext[0].find('numpods=')+9:xmltext[0].find('datatypes=')-1].rstrip('"')
         podinfo = []
-       # for i in xmltext:
-          #  podinfo.append([
         numpods = int(xmltext[0][xmltext[0].find('numpods=')+9:xmltext[0].find('datatypes=')-6])
-        #print(xmltext)
         info = {}
         for i in range(1, numpods):
             podtitle = xmltext[i][xmltext[i].find('<pod title="')+len('<pod title="')+3:xmltext[i].find('scanner')-7].split('|')
@@ -126,23 +106,24 @@ class data:
         return info
 
 config = input.readconfig()
+keywords = input.readkeywords()
+functions = config[4]
+#print(keywords)
+
 #print(config)
-<<<<<<< HEAD
 urlInput = "how many m and m's can fit into a bathtub"
 #data.getweather()
 #print(data.wolframinfo(urlInput))
 
-#def parseinput(input):
+#def parseinput(input, keywords):
     
+print(processing.numkeywords('this is a cat', 'this is an dog'))
+            
+#parseinput('weather in ajax', functions, keywords) 
     
-    
-=======
-urlInput = "what is the weather in ajax?"
 
-data.getweather()
+    
 
-urlInput = "what is eulors number?"
->>>>>>> refs/remotes/origin/Manu
 
 
 
