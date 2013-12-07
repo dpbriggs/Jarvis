@@ -10,5 +10,4 @@ VGATJX-XEUAUHJEWV
 #Prefered Keywords (For Wolframalpha searches) SEPERATE BY COMMAS WITH NO SPACES
 approximate,result
 
-#Established functions
-weather,wolfram
+
