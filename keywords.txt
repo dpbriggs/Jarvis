@@ -2,3 +2,5 @@
 weather,weather
 search,wolfram
 what is,wolfram
+plus,+
+
