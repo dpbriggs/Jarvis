@@ -84,7 +84,10 @@ class data:
         wolfinfo = urllib.request.urlopen(url).read()
         xmltext = wolfinfo.decode('utf-8')
         xmltext = xmltext.split('</pod>')
+        subxmltext = xmltext.split('</subpod>')
         numpods = int(xmltext[0][xmltext[0].find('numpods=')+9:xmltext[0].find('datatypes=')-6])
+        #if numsubpods >= 1:
+        numsubpods = int(xmltext[0][xmltext[0].find('numpods=')+9:xmltext[0].find('datatypes=')-6])
         info = {}
         for i in range(1, numpods):
             podtitle = xmltext[i][xmltext[i].find('<pod title="')+len('<pod title="')+3:xmltext[i].find('scanner')-7].split('|')
@@ -96,6 +99,7 @@ config = input.readconfig()
 #print(config)
 urlInput = "what is eulors number?"
 
+urlInput2 = "how many m and m's could fit in a bath tub?"
             
 
         
