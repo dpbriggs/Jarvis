@@ -16,7 +16,7 @@ import urllib.request
 ## WILL DISCUSS WITH YOU GUYS LATER
 
     
-class input:
+class readinput:
     def readconfig():
         #load config file and edit it
         tempconfig = open("config.txt").readlines()
@@ -40,7 +40,7 @@ class output:
     #Call espeak
     def callespeak(inputstr):
         hold = str(inputstr)
-        replacewords = input.linkedwords('language.txt')
+        replacewords = readinput.linkedwords('language.txt')
         for i in range(0, len(replacewords)):
             hold = hold.replace(replacewords[i][0], ' '+str(replacewords[i][1])+' ')  
         
@@ -58,11 +58,11 @@ class processing:
         return output
 
     
-    def numkeywords(input, output):
-        if input == list(input):
-            inputterms = input
+    def numkeywords(inputx, output):
+        if inputx == list(inputx):
+            inputterms = inputx
         else:
-            inputterms = input.split(' ')
+            inputterms = inputx.split(' ')
         for i in range(0, len(inputterms)):
             inputterms[i] = inputterms[i].rstrip(' ')
         outputterms = output
@@ -72,12 +72,12 @@ class processing:
                 hold.append(i)
         return hold
 
-    def readwolframinfo(input):
+    def readwolframinfo(inputx):
         goodwords = config[3]
         valuelist = []
-        for i in range(0, len(input)):
-            valuelist.append(len(processing.numkeywords(input[i][0], goodwords)))
-        gooddata = input[valuelist[valuelist.index(max(valuelist))]][1]
+        for i in range(0, len(inputx)):
+            valuelist.append(len(processing.numkeywords(inputx[i][0], goodwords)))
+        gooddata = inputx[valuelist[valuelist.index(max(valuelist))]][1]
         return gooddata[0].replace('\n', ' ')
         
         
@@ -130,8 +130,8 @@ class data:
         return processing.readwolframinfo(info)
 
  
-config = input.readconfig()
-hold = input.linkedwords('keywords.txt')
+config = readinput.readconfig()
+hold = readinput.linkedwords('keywords.txt')
 keywords = []
 functions = []
 for i in range(0, len(hold)):
@@ -144,8 +144,8 @@ urlInput = "how many m and m's can fit into a bathtub"
 
 
 
-def parseinput(input, keywords, functions):
-    matching = processing.numkeywords(input, keywords)
+def parseinput(inputx, keywords, functions):
+    matching = processing.numkeywords(inputx, keywords)
     
     matchingkeys = []
     matchingfunc = []
@@ -158,11 +158,11 @@ def parseinput(input, keywords, functions):
         if matchingfunc[0] == 'weather':
             output.callespeak(data.getweather())
         elif matchingfunc[0] == 'wolfram':
-            output.callespeak(data.wolframinfo(input.rstrip(matching[0])))
+            output.callespeak(data.wolframinfo(inputx.rstrip(matching[0])))
     
 #print('search '+urlInput)
 #parseinput('weather', keywords, functions)
-inputx = 'search '+urlInput
+inputx = str(input('Enter Question: '))
 parseinput(inputx, keywords, functions)
 
     
