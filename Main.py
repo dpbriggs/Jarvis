@@ -3,7 +3,7 @@
 import subprocess
 import urllib.request 
 
-## MAJOR CLASSES: input, output, format, and data
+## MAJOR CLASSES: input, output, processing, and data
 ## EACH CLASS DEALS WITH NAME
 ## THINGS YET TO BE MADE:
 ##      NATURAL LANGUAGE OUTPUT
@@ -24,11 +24,11 @@ class input:
         for i in range(0, len(tempconfig)):  #elements in array
             if tempconfig[i].find('#') == -1 and tempconfig[i] != "\n":
                 config.append(tempconfig[i].rstrip('\n'))
-        config[3] = config[3].split(',') #seperate keywords
+        config[3] = config[3].split(',') #seperate keywords (wolframalpha keywords we like)
         return config
     
-    def readkeywords():
-        tempconfig = open("keywords.txt").readlines()
+    def linkedwords(inputfile):
+        tempconfig = open(inputfile).readlines()
         keywords = []
         for i in range(0, len(tempconfig)):           
             if tempconfig[i].find('#') == -1 and tempconfig[i] != "\n":
@@ -39,40 +39,50 @@ class input:
 class output:
     #Call espeak
     def callespeak(inputstr):
-        proc=subprocess.Popen(['espeak',str(inputstr)])
+        hold = str(inputstr)
+        replacewords = input.linkedwords('language.txt')
+        for i in range(0, len(replacewords)):
+            hold = hold.replace(replacewords[i][0], ' '+str(replacewords[i][1])+' ')  
+        
+        proc=subprocess.Popen(['espeak',str(hold)])
     
             
 class processing:
     
     def weatherinfo(tempurature, windchill, conditions):
-        hold = [tempurature, windchill, conditions]
-        
+        hold = [tempurature, windchill, conditions]  
         for i in range(0, len(hold)-1):
             if hold[i][0] == "-":
-                hold[i] = "negative " + hold[i][1:]
-                
+                hold[i] = "negative " + hold[i][1:]      
         output = "It is " + hold[0] + " Degrees with a Windchill of " + hold[1] + " and the skys are" + hold[2]
         return output
 
     
     def numkeywords(input, output):
-        inputterms = input.split(' ')
+        if input == list(input):
+            inputterms = input
+        else:
+            inputterms = input.split(' ')
         for i in range(0, len(inputterms)):
             inputterms[i] = inputterms[i].rstrip(' ')
-
-        
         outputterms = output
-        
         hold = []
         for i in inputterms:
             if i in outputterms:
                 hold.append(i)
         return hold
 
-
+    def readwolframinfo(input):
+        goodwords = config[3]
+        valuelist = []
+        for i in range(0, len(input)):
+            valuelist.append(len(processing.numkeywords(input[i][0], goodwords)))
+        gooddata = input[valuelist[valuelist.index(max(valuelist))]][1]
+        return gooddata[0].replace('\n', ' ')
+        
+        
     
 class data:
-    
     
     def getweather():
         url = urllib.request.urlopen(config[0]).read()
@@ -93,7 +103,7 @@ class data:
         if nowindchill != 1:
             windchill = 0
         outdata = processing.weatherinfo(str(celsius), str(windchill), conditions)
-        output.callespeak(outdata)
+        return outdata
 
 
     def wolframinfo(urlInput):
@@ -111,19 +121,17 @@ class data:
         #numsubpods.append(int(xmltext[1][xmltext[1].find('numsubpods=')+len('numsubpods=')+1:xmltext[1].find('primary')-7]))
         #for i in range(2, len(xmltext)):
           #  numsubpods.append(int(xmltext[i][xmltext[i].find('numsubpods=')+len('numsubpods=')+1:xmltext[i].find('<subpod')-5]))
-        
-            
-        
-        info = {}
-        for i in range(1, numpods):
+                
+        info = []
+        for i in range(1, numpods): #It starts at one because (for some reason) xmltext[0] is messy (interpretation info?)
             podtitle = xmltext[i][xmltext[i].find('<pod title="')+len('<pod title="')+3:xmltext[i].find('scanner')-7].split('|')
             podinfo = xmltext[i][xmltext[i].find('<plaintext>')+len('<plaintext>'):xmltext[i].find('</plaintext>')].split('|')
-            info[i] = (podtitle, podinfo)
-        return info
+            info.append((podtitle, podinfo))
+        return processing.readwolframinfo(info)
 
  
 config = input.readconfig()
-hold = input.readkeywords()
+hold = input.linkedwords('keywords.txt')
 keywords = []
 functions = []
 for i in range(0, len(hold)):
@@ -133,6 +141,7 @@ for i in range(0, len(hold)):
 
 
 urlInput = "how many m and m's can fit into a bathtub"
+
 
 
 def parseinput(input, keywords, functions):
@@ -147,13 +156,14 @@ def parseinput(input, keywords, functions):
        
     if len(matchingfunc) == 1:
         if matchingfunc[0] == 'weather':
-            data.getweather()
+            output.callespeak(data.getweather())
         elif matchingfunc[0] == 'wolfram':
-            data.wolframinfo(input.rstrip(matching[0]))
+            output.callespeak(data.wolframinfo(input.rstrip(matching[0])))
     
 #print('search '+urlInput)
-parseinput('weather', keywords, functions) 
-    
+#parseinput('weather', keywords, functions)
+inputx = 'search '+urlInput
+parseinput(inputx, keywords, functions)
 
     
 

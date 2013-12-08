@@ -8,4 +8,6 @@ VGATJX-XEUAUHJEWV
 1
 
 #Prefered Keywords (For Wolframalpha searches) SEPERATE BY COMMAS WITH NO SPACES
-approximate,result
+approximate,result,number
+
+
