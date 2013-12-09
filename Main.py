@@ -182,7 +182,7 @@ def parseinput(inputx, keywords, functions):
     
 #print('search '+urlInput)
 #parseinput('weather', keywords, functions)
-data.timeanddate(2)
+
 inputx = str(input('Enter Question: '))
 parseinput(inputx, keywords, functions)
 
