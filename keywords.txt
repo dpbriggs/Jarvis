@@ -1,0 +1,5 @@
+#functional keywords, put keyword (or phrase) and associated function in format: "keyword, function", seperate each function by a new line
+weather,weather
+search,wolfram
+what is,wolfram
+
