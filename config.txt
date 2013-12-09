@@ -8,10 +8,6 @@ VGATJX-XEUAUHJEWV
 1
 
 #Prefered Keywords (For Wolframalpha searches) SEPERATE BY COMMAS WITH NO SPACES
-<<<<<<< HEAD
-approximate,result
-=======
 approximate,result,number
 
 
->>>>>>> refs/remotes/origin/master
