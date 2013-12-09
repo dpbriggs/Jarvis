@@ -1,0 +1,3 @@
+#Replace symbols with words (format: symbol,word)
+^,to the power of
+&,and
