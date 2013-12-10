@@ -2,4 +2,6 @@
 weather,weather
 search,wolfram
 what is,wolfram
+time,time
+date,date
 

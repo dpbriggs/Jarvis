@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 #Import everything
 import subprocess
-import urllib.request 
+import urllib.request
+from datetime import datetime
 
 ## MAJOR CLASSES: input, output, processing, and data
 ## EACH CLASS DEALS WITH NAME
@@ -80,9 +81,35 @@ class processing:
         gooddata = inputx[valuelist[valuelist.index(max(valuelist))]][1]
         return gooddata[0].replace('\n', ' ')
         
-        
+    def addnumbersuperscript(number):
+        if number % 10 == 1:
+            return str(number) + ' first'
+        elif number % 10 == 2:
+            return str(number) + ' second'
+        elif number % 10 == 3:
+            return str(number) + ' third'
+        else:
+            return str(number) + 'th'
     
 class data:
+
+    def timeanddate(i):
+        now = datetime.now()
+        current_year = str(now.year)
+        current_month = str(now.month)
+        current_day = str(now.day)
+        current_hour = str(now.hour)
+        current_minute = str(now.minute)
+        month = ['january' , 'february', 'march' , 'april', 'may', 'june', 'july', 'augest', 'september', 'october', 'november', 'december']
+
+        if i == 1:
+            date = ((month[now.month-1]),processing.addnumbersuperscript(now.day),now.year)
+            output.callespeak(date)
+        elif i == 2:
+            time = (now.hour,now.minute)
+            output.callespeak(time)
+
+
     
     def getweather():
         url = urllib.request.urlopen(config[0]).read()
@@ -127,6 +154,7 @@ class data:
             podtitle = xmltext[i][xmltext[i].find('<pod title="')+len('<pod title="')+3:xmltext[i].find('scanner')-7].split('|')
             podinfo = xmltext[i][xmltext[i].find('<plaintext>')+len('<plaintext>'):xmltext[i].find('</plaintext>')].split('|')
             info.append((podtitle, podinfo))
+        print(info)
         return processing.readwolframinfo(info)
 
  
@@ -159,15 +187,16 @@ def parseinput(inputx, keywords, functions):
             output.callespeak(data.getweather())
         elif matchingfunc[0] == 'wolfram':
             output.callespeak(data.wolframinfo(inputx.rstrip(matching[0])))
+        elif matchingfunc[0] == 'date':
+            data.timeanddate(1)
+        elif matchingfunc[0] == 'time':
+            data.timeanddate(2)
     
 #print('search '+urlInput)
 #parseinput('weather', keywords, functions)
+
 inputx = str(input('Enter Question: '))
 parseinput(inputx, keywords, functions)
-
-    
-
-
 
 
 
