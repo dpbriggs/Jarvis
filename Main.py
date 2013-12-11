@@ -82,14 +82,21 @@ class processing:
         return gooddata[0].replace('\n', ' ')
         
     def addnumbersuperscript(number):
-        if number % 10 == 1:
-            return str(number) + ' first'
-        elif number % 10 == 2:
-            return str(number) + ' second'
-        elif number % 10 == 3:
-            return str(number) + ' third'
+        if number == 1:
+            return ' first'
+        elif number == 2:
+            return ' second'
+        elif number == 3:
+            return ' third'
         else:
-            return str(number) + 'th'
+            if number % 10 == 1:
+                return str(number) + ' first'
+            elif number % 10 == 2:
+                return str(number) + ' second'
+            elif number % 10 == 3:
+                return str(number) + ' third'
+            else:
+                return str(number) + 'th'
     
 class data:
 
