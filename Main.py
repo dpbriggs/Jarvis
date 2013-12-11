@@ -81,7 +81,22 @@ class processing:
         gooddata = inputx[valuelist[valuelist.index(max(valuelist))]][1]
         return gooddata[0].replace('\n', ' ')
         
-        
+    def addnumbersuperscript(number):
+        if number == 1:
+            return ' first'
+        elif number == 2:
+            return ' second'
+        elif number == 3:
+            return ' third'
+        else:
+            if number % 10 == 1:
+                return str(number) + ' first'
+            elif number % 10 == 2:
+                return str(number) + ' second'
+            elif number % 10 == 3:
+                return str(number) + ' third'
+            else:
+                return str(number) + 'th'
     
 class data:
 
@@ -95,7 +110,7 @@ class data:
         month = ['january' , 'february', 'march' , 'april', 'may', 'june', 'july', 'augest', 'september', 'october', 'november', 'december']
 
         if i == 1:
-            date = ((month[now.month-1]),now.day,now.year)
+            date = ((month[now.month-1]),processing.addnumbersuperscript(now.day),now.year)
             output.callespeak(date)
         elif i == 2:
             time = (now.hour,now.minute)
@@ -179,6 +194,10 @@ def parseinput(inputx, keywords, functions):
             output.callespeak(data.getweather())
         elif matchingfunc[0] == 'wolfram':
             output.callespeak(data.wolframinfo(inputx.rstrip(matching[0])))
+        elif matchingfunc[0] == 'date':
+            data.timeanddate(1)
+        elif matchingfunc[0] == 'time':
+            data.timeanddate(2)
     
 #print('search '+urlInput)
 #parseinput('weather', keywords, functions)
@@ -186,7 +205,8 @@ def parseinput(inputx, keywords, functions):
 inputx = str(input('Enter Question: '))
 parseinput(inputx, keywords, functions)
 
-    
+#yolo
+
 
 
 
