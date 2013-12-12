@@ -10,4 +10,5 @@ VGATJX-XEUAUHJEWV
 #Prefered Keywords (For Wolframalpha searches) SEPERATE BY COMMAS WITH NO SPACES
 approximate,result,number
 
-
+#Configure time: 24 hour time == 24, am/pm == AM
+24

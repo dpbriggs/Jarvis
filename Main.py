@@ -26,6 +26,7 @@ class readinput:
             if tempconfig[i].find('#') == -1 and tempconfig[i] != "\n":
                 config.append(tempconfig[i].rstrip('\n'))
         config[3] = config[3].split(',') #seperate keywords (wolframalpha keywords we like)
+        config[4] = str(config[4])
         return config
     
     def linkedwords(inputfile):
@@ -64,6 +65,8 @@ class processing:
             inputterms = inputx
         else:
             inputterms = inputx.split(' ')
+            for i in range(0, len(inputterms)):
+                inputterms[i] = inputterms[i].strip(' ') 
         for i in range(0, len(inputterms)):
             inputterms[i] = inputterms[i].rstrip(' ')
         outputterms = output
@@ -88,6 +91,8 @@ class processing:
             return ' second'
         elif number == 3:
             return ' third'
+        elif number < 20 and number > 3:
+            return str(number) + 'th'
         else:
             if number % 10 == 1:
                 return str(number) + ' first'
@@ -100,7 +105,7 @@ class processing:
     
 class data:
 
-    def timeanddate(i):
+    def timeanddate(i, AM):
         now = datetime.now()
         current_year = str(now.year)
         current_month = str(now.month)
@@ -113,9 +118,24 @@ class data:
             date = ((month[now.month-1]),processing.addnumbersuperscript(now.day),now.year)
             output.callespeak(date)
         elif i == 2:
-            time = (now.hour,now.minute)
+            if AM == 'AM' and now.hour > 12:
+                time = (str(now.hour-12),str(now.minute), ' PM')
+            elif AM == 'AM' and now.hour <= 12:
+                time = (str(now.hour),str(now.minute), ' AM')
+            else:
+                time = (str(now.hour), str(now.minute))
             output.callespeak(time)
-
+        elif i == 3:
+            date = ((month[now.month-1]),processing.addnumbersuperscript(now.day),now.year)
+            if AM == 'AM' and now.hour > 12:
+                time = (str(now.hour-12),str(now.minute), ' PM')
+            elif AM == 'AM' and now.hour <= 12:
+                time = (str(now.hour),str(now.minute), ' AM')
+            else:
+                time = (str(now.hour), str(now.minute))
+             
+            outputx = 'It is ' + str(time) + ' and the date is ' + str(date)
+            output.callespeak(outputx)
 
     
     def getweather():
@@ -181,13 +201,12 @@ urlInput = "how many m and m's can fit into a bathtub"
 
 def parseinput(inputx, keywords, functions):
     matching = processing.numkeywords(inputx, keywords)
-    
+    print(matching)
     matchingkeys = []
     matchingfunc = []
     for i in matching:
         if i in keywords:
             matchingfunc.append(functions[keywords.index(i)])
-            
        
     if len(matchingfunc) == 1:
         if matchingfunc[0] == 'weather':
@@ -195,17 +214,21 @@ def parseinput(inputx, keywords, functions):
         elif matchingfunc[0] == 'wolfram':
             output.callespeak(data.wolframinfo(inputx.rstrip(matching[0])))
         elif matchingfunc[0] == 'date':
-            data.timeanddate(1)
+            data.timeanddate(1, config[4])
         elif matchingfunc[0] == 'time':
-            data.timeanddate(2)
+            data.timeanddate(2, config[4])
+            
+    elif len(matchingfunc) == 2:
+        print('This works')
+        if 'date' in matchingfunc and 'time' in matchingfunc:
+            data.timeanddate(3, config[4])
+            
     
 #print('search '+urlInput)
 #parseinput('weather', keywords, functions)
 
 inputx = str(input('Enter Question: '))
 parseinput(inputx, keywords, functions)
-
-#yolo
 
 
 
