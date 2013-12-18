@@ -2,12 +2,13 @@
 #Import everything
 import subprocess
 import urllib.request
+import configparser
 from datetime import datetime
 
 ## MAJOR CLASSES: input, output, processing, and data
 ## EACH CLASS DEALS WITH NAME
 ## THINGS YET TO BE MADE:
-##      NATURAL LANGUAGE OUTPUT
+##      NATURAL LANGUAGE OUTPUT (We kinda have it, sorta)
 ##      INPUT OF ANY KIND
 ## CLASSES YET TO BE EXPANDED:
 ##      ACCURACY
@@ -18,31 +19,21 @@ from datetime import datetime
 
     
 class readinput:
-    def readconfig():
-        #load config file and edit it
-        tempconfig = open("config.txt").readlines()
-        config = []
-        for i in range(0, len(tempconfig)):  #elements in array
-            if tempconfig[i].find('#') == -1 and tempconfig[i] != "\n":
-                config.append(tempconfig[i].rstrip('\n'))
-        config[3] = config[3].split(',') #seperate keywords (wolframalpha keywords we like)
-        config[4] = str(config[4])
-        return config
     
-    def linkedwords(inputfile):
-        tempconfig = open(inputfile).readlines()
-        keywords = []
-        for i in range(0, len(tempconfig)):           
-            if tempconfig[i].find('#') == -1 and tempconfig[i] != "\n":
-                textline = tempconfig[i].rstrip('\n')
-                keywords.append(textline.split(','))
-        return keywords
+
+    def readconfig():
+        #global variable for config
+        global config
+        #load config file and edit it
+        configx = configparser.ConfigParser()
+        configx.read('config.ini')
+        config = configx
     
 class output:
     #Call espeak
     def callespeak(inputstr):
         hold = str(inputstr)
-        replacewords = readinput.linkedwords('language.txt')
+        replacewords = eval(config['language']['REPLACE'])
         for i in range(0, len(replacewords)):
             hold = hold.replace(replacewords[i][0], ' '+str(replacewords[i][1])+' ')  
         
@@ -77,7 +68,7 @@ class processing:
         return hold
 
     def readwolframinfo(inputx):
-        goodwords = config[3]
+        goodwords = eval(config['behaviour']['WOLFKEYWORDS'])
         valuelist = []
         for i in range(0, len(inputx)):
             valuelist.append(len(processing.numkeywords(inputx[i][0], goodwords)))
@@ -114,18 +105,28 @@ class data:
         current_minute = str(now.minute)
         month = ['january' , 'february', 'march' , 'april', 'may', 'june', 'july', 'augest', 'september', 'october', 'november', 'december']
 
-        if i == 1:
+        if i == 1: # Only date
             date = ((month[now.month-1]),processing.addnumbersuperscript(now.day),now.year)
             output.callespeak(date)
-        elif i == 2:
+        elif i == 2: #Only time
             if AM == 'AM' and now.hour > 12:
-                time = (str(now.hour-12),str(now.minute), ' PM')
+                if now.minute < 10: #If we don't add the 'o', it says 8-5 PM not 8:05
+                    time = (str(now.hour-12),'o' +str(now.minute), ' PM')
+                else:
+                    time = (str(now.hour-12),str(now.minute), ' PM')
             elif AM == 'AM' and now.hour <= 12:
-                time = (str(now.hour),str(now.minute), ' AM')
+                if now.minute < 10:
+                    time = (str(now.hour), 'o '+str(now.minute), ' AM')
+                else:
+                    time = (str(now.hour),str(now.minute), ' AM')
             else:
-                time = (str(now.hour), str(now.minute))
+                if now.minute < 10:
+                    time = (str(now.hour), 'o '+str(now.minute))
+                else:
+                    time = (str(now.hour), str(now.minute))
             output.callespeak(time)
-        elif i == 3:
+            print(time)
+        elif i == 3: #Time and date
             date = ((month[now.month-1]),processing.addnumbersuperscript(now.day),now.year)
             if AM == 'AM' and now.hour > 12:
                 time = (str(now.hour-12),str(now.minute), ' PM')
@@ -139,7 +140,8 @@ class data:
 
     
     def getweather():
-        url = urllib.request.urlopen(config[0]).read()
+        url = 'http://weather.noaa.gov/pub/data/observations/metar/decoded/'+ config['userinfo']['ICAO'] +'.TXT'
+        url = urllib.request.urlopen(url).read()
         text = url.decode('utf-8')
         text = text.split("\n") #Formats text file
         nowindchill = 0
@@ -161,7 +163,7 @@ class data:
 
 
     def wolframinfo(urlInput):
-        url = 'http://api.wolframalpha.com/v2/query?input="' + urlInput.replace(" ", "%20") + '"&appid=' + config[1]
+        url = 'http://api.wolframalpha.com/v2/query?input="' + urlInput.replace(" ", "%20") + '"&appid=' + config['userinfo']['WOLFAPI']
         wolfinfo = urllib.request.urlopen(url).read()
         xmltext = wolfinfo.decode('utf-8')
         xmltext = xmltext.split('</pod>')
@@ -184,9 +186,8 @@ class data:
         print(info)
         return processing.readwolframinfo(info)
 
- 
-config = readinput.readconfig()
-hold = readinput.linkedwords('keywords.txt')
+readinput.readconfig()
+hold = eval(config['behaviour']['KEYWORDS'])
 keywords = []
 functions = []
 for i in range(0, len(hold)):
@@ -214,14 +215,13 @@ def parseinput(inputx, keywords, functions):
         elif matchingfunc[0] == 'wolfram':
             output.callespeak(data.wolframinfo(inputx.rstrip(matching[0])))
         elif matchingfunc[0] == 'date':
-            data.timeanddate(1, config[4])
+            data.timeanddate(1, config['behaviour']['TIME'])
         elif matchingfunc[0] == 'time':
-            data.timeanddate(2, config[4])
+            data.timeanddate(2, config['behaviour']['TIME'])
             
     elif len(matchingfunc) == 2:
-        print('This works')
         if 'date' in matchingfunc and 'time' in matchingfunc:
-            data.timeanddate(3, config[4])
+            data.timeanddate(3, config['behaviour']['TIME'])
             
     
 #print('search '+urlInput)
