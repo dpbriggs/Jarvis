@@ -4,6 +4,7 @@ import subprocess
 import urllib.request
 import configparser
 from datetime import datetime
+import xml.etree.ElementTree as etree
 
 ## MAJOR CLASSES: input, output, processing, and data
 ## EACH CLASS DEALS WITH NAME
@@ -56,10 +57,10 @@ class processing:
             inputterms = inputx
         else:
             inputterms = inputx.split(' ')
-            for i in range(0, len(inputterms)):
-                inputterms[i] = inputterms[i].strip(' ') 
+        
         for i in range(0, len(inputterms)):
-            inputterms[i] = inputterms[i].rstrip(' ')
+            inputterms[i] = inputterms[i].strip(' ')
+            
         outputterms = output
         hold = []
         for i in inputterms:
@@ -69,11 +70,13 @@ class processing:
 
     def readwolframinfo(inputx):
         goodwords = eval(config['behaviour']['WOLFKEYWORDS'])
+        
         valuelist = []
         for i in range(0, len(inputx)):
-            valuelist.append(len(processing.numkeywords(inputx[i][0], goodwords)))
+            valuelist.append(len(processing.numkeywords(inputx[i][0].lower(), goodwords)))
+            
         gooddata = inputx[valuelist[valuelist.index(max(valuelist))]][1]
-        return gooddata[0].replace('\n', ' ')
+        return gooddata.replace('\n', ' ')
         
     def addnumbersuperscript(number):
         if number == 1:
@@ -164,28 +167,18 @@ class data:
 
     def wolframinfo(urlInput):
         url = 'http://api.wolframalpha.com/v2/query?input="' + urlInput.replace(" ", "%20") + '"&appid=' + config['userinfo']['WOLFAPI']
-        wolfinfo = urllib.request.urlopen(url).read()
-        xmltext = wolfinfo.decode('utf-8')
-        xmltext = xmltext.split('</pod>')
-        #numpods = xmltext[0][xmltext[0].find('numpods=')+9:xmltext[0].find('datatypes=')-1].rstrip('"')
-        podinfo = []
-        numpods = int(xmltext[0][xmltext[0].find('numpods=')+9:xmltext[0].find('datatypes=')-6])
-        numsubpods = []
-        ## Second line (numsubpod[1]) has primary='true' tag, so it must be included seperated (talking about numsubpods)
-        #numsubpods.append(int(xmltext[0][xmltext[0].find('numsubpods=')+len('numsubpods=')+1:xmltext[0].find('<subpod')-5]))
-        ##Line Two \/\/\/
-        #numsubpods.append(int(xmltext[1][xmltext[1].find('numsubpods=')+len('numsubpods=')+1:xmltext[1].find('primary')-7]))
-        #for i in range(2, len(xmltext)):
-          #  numsubpods.append(int(xmltext[i][xmltext[i].find('numsubpods=')+len('numsubpods=')+1:xmltext[i].find('<subpod')-5]))
-                
+        xmltext = (urllib.request.urlretrieve(url))
+        root = (etree.parse(xmltext[0])).getroot() #Using ElementTree to read wolframalpha xml file
         info = []
-        for i in range(1, numpods): #It starts at one because (for some reason) xmltext[0] is messy (interpretation info?)
-            podtitle = xmltext[i][xmltext[i].find('<pod title="')+len('<pod title="')+3:xmltext[i].find('scanner')-7].split('|')
-            podinfo = xmltext[i][xmltext[i].find('<plaintext>')+len('<plaintext>'):xmltext[i].find('</plaintext>')].split('|')
+        for i in range(0, len(root)):
+            podtitle = (root[i].attrib)['title'] #Pulls title off pod
+            podinfo = root[i][0][0].text #Pulls info off <plaintext> pod
             info.append((podtitle, podinfo))
-        print(info)
+            
         return processing.readwolframinfo(info)
+        
 
+        
 readinput.readconfig()
 hold = eval(config['behaviour']['KEYWORDS'])
 keywords = []
@@ -202,7 +195,6 @@ urlInput = "how many m and m's can fit into a bathtub"
 
 def parseinput(inputx, keywords, functions):
     matching = processing.numkeywords(inputx, keywords)
-    print(matching)
     matchingkeys = []
     matchingfunc = []
     for i in matching:
@@ -229,7 +221,6 @@ def parseinput(inputx, keywords, functions):
 
 inputx = str(input('Enter Question: '))
 parseinput(inputx, keywords, functions)
-
 
 
 
