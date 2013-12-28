@@ -29,20 +29,30 @@ class readinput:
         configx = configparser.ConfigParser()
         configx.read('config.ini')
         config = configx
-    
-class output:
-    #Call espeak
-    def callespeak(inputstr):
-        hold = str(inputstr)
-        replacewords = eval(config['language']['REPLACE'])
-        for i in range(0, len(replacewords)):
-            hold = hold.replace(replacewords[i][0], ' '+str(replacewords[i][1])+' ')  
         
-        proc=subprocess.Popen(['espeak',str(hold)])
+class output:
+    def detout(inputstr): #detout = determine output
+        outputx = config['behaviour']['OUTPUT']
+        getattr(output, outputx)(inputstr)
+        
+        
     
+    def espeak(inputstr): #Call espeak
+        hold = processing.replacestrings(inputstr)
+        print(hold)
+        proc=subprocess.Popen(['espeak',str(hold)])
+
+    def printx(inputstr): #This is a sad result
+        print(inputstr)
             
 class processing:
-    
+
+    def replacestrings(inputx):
+        hold = str(inputx)
+        replacewords = eval(config['language']['REPLACE'])
+        for i in range(0, len(replacewords)):
+            hold = hold.replace(replacewords[i][0], ' '+str(replacewords[i][1])+' ')
+        return hold
     def weatherinfo(tempurature, windchill, conditions):
         hold = [tempurature, windchill, conditions]  
         for i in range(0, len(hold)-1):
@@ -53,30 +63,40 @@ class processing:
 
     
     def numkeywords(inputx, output):
-        if inputx == list(inputx):
+        if inputx == list(inputx): #Double checks if item is a list, and if not makes it a list based on spaces
             inputterms = inputx
         else:
             inputterms = inputx.split(' ')
         
         for i in range(0, len(inputterms)):
-            inputterms[i] = inputterms[i].strip(' ')
-            
+            inputterms[i] = inputterms[i].strip(' ') #gets rid of extra space 
+                                                     #ex "hello world" --> ['hello', ' world'] --> ['hello', 'world']
         outputterms = output
         hold = []
         for i in inputterms:
             if i in outputterms:
-                hold.append(i)
+                hold.append(i) #append matching words to a list
         return hold
 
     def readwolframinfo(inputx):
         goodwords = eval(config['behaviour']['WOLFKEYWORDS'])
         
         valuelist = []
-        for i in range(0, len(inputx)):
-            valuelist.append(len(processing.numkeywords(inputx[i][0].lower(), goodwords)))
-            
-        gooddata = inputx[valuelist[valuelist.index(max(valuelist))]][1]
-        return gooddata.replace('\n', ' ')
+        if inputx == []:
+            return "Wolfram Alpha did not return any information"
+        else:
+            for i in range(0, len(inputx)):
+                #Rank result by number of matching keywords per element in list
+                #(Generally first result in wolframalpha is more accurate, so we may not need to worry about elements having equal values)
+                valuelist.append(len(processing.numkeywords(inputx[i][0].lower(), goodwords)))
+
+            ######## Check if all elements are 0 ########
+            if all(x == 0 for x in valuelist) == True:
+                return "Wolfram alpha returned no useful information"
+            else:
+                #Since inputx and valuelist are going to be of equal size, we can index inputx by the greatest value index in valuelist
+                gooddata = inputx[valuelist[valuelist.index(max(valuelist))]][1]
+                return gooddata.replace('\n', ' ')
         
     def addnumbersuperscript(number):
         if number == 1:
@@ -110,24 +130,24 @@ class data:
 
         if i == 1: # Only date
             date = ((month[now.month-1]),processing.addnumbersuperscript(now.day),now.year)
-            output.callespeak(date)
+            output.espeak(date)
         elif i == 2: #Only time
             if AM == 'AM' and now.hour > 12:
                 if now.minute < 10: #If we don't add the 'o', it says 8-5 PM not 8:05
-                    time = (str(now.hour-12),'o' +str(now.minute), ' PM')
+                    time = (str(now.hour-12),'o' +str(now.minute), ' PM')#Add o to make 12:03 sound like "12 'o'3" and not "12...3"
                 else:
                     time = (str(now.hour-12),str(now.minute), ' PM')
             elif AM == 'AM' and now.hour <= 12:
                 if now.minute < 10:
-                    time = (str(now.hour), 'o '+str(now.minute), ' AM')
+                    time = (str(now.hour), 'o '+str(now.minute), ' AM')#Add o to make 12:03 sound like "12 'o'3" and not "12...3"
                 else:
                     time = (str(now.hour),str(now.minute), ' AM')
             else:
                 if now.minute < 10:
-                    time = (str(now.hour), 'o '+str(now.minute))
+                    time = (str(now.hour), 'o '+str(now.minute)) #Add o to make 12:03 sound like "12 'o'3" and not "12...3"
                 else:
                     time = (str(now.hour), str(now.minute))
-            output.callespeak(time)
+            output.espeak(time)
             print(time)
         elif i == 3: #Time and date
             date = ((month[now.month-1]),processing.addnumbersuperscript(now.day),now.year)
@@ -139,7 +159,7 @@ class data:
                 time = (str(now.hour), str(now.minute))
              
             outputx = 'It is ' + str(time) + ' and the date is ' + str(date)
-            output.callespeak(outputx)
+            return outputx
 
     
     def getweather():
@@ -149,17 +169,19 @@ class data:
         text = text.split("\n") #Formats text file
         nowindchill = 0
         for i in range(0, len(text)):
-            if text[i].find('Temperature') != -1:
+            if text[i].find('Temperature') != -1: #find returns -1 if the search string is not in the file (bigger string)
                 celsius = text[i]
-                celsius = celsius[celsius.find('(')+1:celsius.find(')')-1].rstrip('C')
+                celsius = celsius[celsius.find('(')+1:celsius.find(')')-1].rstrip('C') #this will return '1 C', .rstrip gets rid of 'C'
                 a = 1
             if text[i].find('Windchill') != -1:
                 windchill = text[i]
                 windchill = windchill[windchill.find('(')+1:windchill.find(')')-1].rstrip('C')
-                nowindchill = 1
+                nowindchill = 1 #This tells us if windchill is even in the file
+                                #I know it's naughty
             if text[i].find('Sky conditions') != -1:
-                conditions = text[i][len('Sky conditions:'):]
-        if nowindchill != 1:
+                conditions = text[i][len('Sky conditions:'):] #Since we seperated the file by lines, we can just pull the entire line-
+                                                              #after the string 'Sky conditions:'
+        if nowindchill != 1: #We set nowindchill to 1 earlier to tell us if we even had windchill
             windchill = 0
         outdata = processing.weatherinfo(str(celsius), str(windchill), conditions)
         return outdata
@@ -169,6 +191,7 @@ class data:
         url = 'http://api.wolframalpha.com/v2/query?input="' + urlInput.replace(" ", "%20") + '"&appid=' + config['userinfo']['WOLFAPI']
         xmltext = (urllib.request.urlretrieve(url))
         root = (etree.parse(xmltext[0])).getroot() #Using ElementTree to read wolframalpha xml file
+        print(root.attrib)
         info = []
         for i in range(0, len(root)):
             podtitle = (root[i].attrib)['title'] #Pulls title off pod
@@ -203,24 +226,25 @@ def parseinput(inputx, keywords, functions):
        
     if len(matchingfunc) == 1:
         if matchingfunc[0] == 'weather':
-            output.callespeak(data.getweather())
+            output.detout(data.getweather())
         elif matchingfunc[0] == 'wolfram':
-            output.callespeak(data.wolframinfo(inputx.rstrip(matching[0])))
+            output.detout(data.wolframinfo(inputx.rstrip(matching[0])))
         elif matchingfunc[0] == 'date':
-            data.timeanddate(1, config['behaviour']['TIME'])
+            output.detout(data.timeanddate(1, config['behaviour']['TIME']))
         elif matchingfunc[0] == 'time':
-            data.timeanddate(2, config['behaviour']['TIME'])
+            output.detout(data.timeanddate(2, config['behaviour']['TIME']))
             
     elif len(matchingfunc) == 2:
         if 'date' in matchingfunc and 'time' in matchingfunc:
-            data.timeanddate(3, config['behaviour']['TIME'])
+            output.detout(data.timeanddate(3, config['behaviour']['TIME']))
             
     
 #print('search '+urlInput)
 #parseinput('weather', keywords, functions)
 
-inputx = str(input('Enter Question: '))
-parseinput(inputx, keywords, functions)
+while(3<6):
+    inputx = str(input('Enter Question: '))
+    parseinput(inputx, keywords, functions)
 
 
 
