@@ -10,13 +10,17 @@ import xml.etree.ElementTree as etree
 ## EACH CLASS DEALS WITH NAME
 ## THINGS YET TO BE MADE:
 ##      NATURAL LANGUAGE OUTPUT (We kinda have it, sorta)
-##      INPUT OF ANY KIND
-## CLASSES YET TO BE EXPANDED:
-##      ACCURACY
+## THINGS YET TO BE EXPANDED:
+##      ACCURACY (We're better)
 ##      ETC (We'll expand when we discuss)
 
-## INCONSISTENCIES IN THE WOLFRAMALPHA XML FILE MAKE SUBPOD SUPPORT VERY DIFFICULT
-## WILL DISCUSS WITH YOU GUYS LATER
+## CURRENT THINGS THAT NEED TO BE FIXED
+## 1. For some reason wolframalpha will spit out a Keyword: 'title' error even though there is titles in the xml file
+## 2. Weather function only works in winter and needs to be more customizable
+## 3. We need a system to work with connecting words, like 'in', ex: 'weather in ottawa' =/= 'weather' (normal)
+
+
+
 
     
 class readinput:
@@ -33,17 +37,14 @@ class readinput:
 class output:
     def detout(inputstr): #detout = determine output
         outputx = config['behaviour']['OUTPUT']
-        getattr(output, outputx)(inputstr)
-        
-        
+        getattr(output, outputx)(processing.replacestrings(inputstr)) # Call child method with name outputx with argument inputstr
+                                                                      # EX: if name = espeak, call output.espeak(inputstr)
     
     def espeak(inputstr): #Call espeak
-        hold = processing.replacestrings(inputstr)
-        print(hold)
         proc=subprocess.Popen(['espeak',str(hold)])
 
-    def printx(inputstr): #This is a sad result
-        print(inputstr)
+    def printx(inputstr): #This is a sad method
+        print(hold)
             
 class processing:
 
@@ -217,14 +218,15 @@ urlInput = "how many m and m's can fit into a bathtub"
 
 
 def parseinput(inputx, keywords, functions):
-    matching = processing.numkeywords(inputx, keywords)
+    
+    matching = processing.numkeywords(inputx, keywords) #Finds all matching keywords in INPUT_STRING with establish KEYWORDS (in .ini file)
     matchingkeys = []
     matchingfunc = []
-    for i in matching:
-        if i in keywords:
+    for i in matching: #It uses this information to check against the keyword file to get position of the function itself
+        if i in keywords: #Keywords and functions are associated in the .ini file and thus will have equal index
             matchingfunc.append(functions[keywords.index(i)])
        
-    if len(matchingfunc) == 1:
+    if len(matchingfunc) == 1: #If there's only one matching keyword
         if matchingfunc[0] == 'weather':
             output.detout(data.getweather())
         elif matchingfunc[0] == 'wolfram':
@@ -234,7 +236,7 @@ def parseinput(inputx, keywords, functions):
         elif matchingfunc[0] == 'time':
             output.detout(data.timeanddate(2, config['behaviour']['TIME']))
             
-    elif len(matchingfunc) == 2:
+    elif len(matchingfunc) == 2: #If there's only 2 matching keywords
         if 'date' in matchingfunc and 'time' in matchingfunc:
             output.detout(data.timeanddate(3, config['behaviour']['TIME']))
             
