@@ -44,7 +44,7 @@ class output:
         proc=subprocess.Popen(['espeak',str(hold)])
 
     def printx(inputstr): #This is a sad method
-        print(hold)
+        print(inputstr)
             
 class processing:
 
