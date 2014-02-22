@@ -110,11 +110,11 @@ class processing:
             return str(number) + 'th'
         else:
             if number % 10 == 1:
-                return str(number) + ' first'
+                return str(number -1) + ' first'
             elif number % 10 == 2:
-                return str(number) + ' second'
+                return str(number -2) + ' second'
             elif number % 10 == 3:
-                return str(number) + ' third'
+                return str(number -3) + ' third'
             else:
                 return str(number) + 'th'
     
@@ -148,8 +148,9 @@ class data:
                     time = (str(now.hour), 'o '+str(now.minute)) #Add o to make 12:03 sound like "12 'o'3" and not "12...3"
                 else:
                     time = (str(now.hour), str(now.minute))
-            output.espeak(time)
-            print(time)
+            #output.detout(time)
+            #print(time)
+            outputx = str(time)
         elif i == 3: #Time and date
             date = ((month[now.month-1]),processing.addnumbersuperscript(now.day),now.year)
             if AM == 'AM' and now.hour > 12:
@@ -160,7 +161,7 @@ class data:
                 time = (str(now.hour), str(now.minute))
              
             outputx = 'It is ' + str(time) + ' and the date is ' + str(date)
-            return outputx
+        return outputx
 
     
     def getweather():
